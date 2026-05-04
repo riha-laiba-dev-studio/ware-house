@@ -1,49 +1,28 @@
 <?php
-
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, SoftDeletes;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $fillable = ['name','email','phone','avatar','password','is_active','last_login_at','last_login_ip'];
+    protected $hidden   = ['password','remember_token'];
+    protected $casts    = ['email_verified_at'=>'datetime','last_login_at'=>'datetime','is_active'=>'boolean','password'=>'hashed'];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+    public function activityLogs() { return $this->hasMany(ActivityLog::class); }
+    public function loginLogs()    { return $this->hasMany(LoginLog::class); }
+    public function purchases()    { return $this->hasMany(Purchase::class,'created_by'); }
+    public function sales()        { return $this->hasMany(Sale::class,'created_by'); }
+    public function managedWarehouses() { return $this->hasMany(Warehouse::class,'manager_id'); }
+    public function getAvatarUrlAttribute(): string {
+        return $this->avatar ? asset('storage/'.$this->avatar) : 'https://ui-avatars.com/api/?name='.urlencode($this->name).'&background=2563eb&color=fff';
     }
+    public function scopeActive($query) { return $query->where('is_active',true); }
 }

@@ -11,6 +11,27 @@ env = { "CI" = "true" }
 [workflows]
 runButton = "Project"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "WMS - Warehouse Management"
+
+[[workflows.workflow]]
+name = "WMS - Warehouse Management"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "bash /home/runner/workspace/wms/start.sh"
+waitForPort = 3000
+
 [agent]
 stack = "PNPM_WORKSPACE"
 expertMode = true
@@ -20,8 +41,16 @@ path = "scripts/post-merge.sh"
 timeoutMs = 20000
 
 [[ports]]
+localPort = 3000
+externalPort = 3000
+
+[[ports]]
 localPort = 3306
 externalPort = 3001
+
+[[ports]]
+localPort = 3307
+externalPort = 3002
 
 [[ports]]
 localPort = 8080

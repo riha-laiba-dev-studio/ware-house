@@ -1,11 +1,47 @@
-@import 'tailwindcss';
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+@layer base {
+  body { @apply font-sans bg-gray-50 text-gray-900; }
+}
+
+@layer components {
+  .btn        { @apply inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer; }
+  .btn-primary{ @apply btn bg-blue-600 text-white hover:bg-blue-700 shadow-sm; }
+  .btn-success{ @apply btn bg-emerald-600 text-white hover:bg-emerald-700 shadow-sm; }
+  .btn-danger { @apply btn bg-red-600 text-white hover:bg-red-700 shadow-sm; }
+  .btn-warning{ @apply btn bg-amber-500 text-white hover:bg-amber-600 shadow-sm; }
+  .btn-outline { @apply btn border border-gray-300 bg-white text-gray-700 hover:bg-gray-50; }
+  .btn-sm     { @apply px-3 py-1.5 text-xs; }
+
+  .card       { @apply bg-white rounded-xl shadow-sm border border-gray-100; }
+  .card-header{ @apply px-6 py-4 border-b border-gray-100 flex items-center justify-between; }
+  .card-body  { @apply p-6; }
+
+  .form-label { @apply block text-sm font-medium text-gray-700 mb-1; }
+  .form-input { @apply w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent; }
+  .form-select{ @apply w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white; }
+  .form-error { @apply text-red-600 text-xs mt-1; }
+
+  .badge         { @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium; }
+  .badge-success { @apply badge bg-emerald-100 text-emerald-800; }
+  .badge-danger  { @apply badge bg-red-100 text-red-800; }
+  .badge-warning { @apply badge bg-amber-100 text-amber-800; }
+  .badge-info    { @apply badge bg-blue-100 text-blue-800; }
+  .badge-gray    { @apply badge bg-gray-100 text-gray-700; }
+
+  .table         { @apply w-full text-sm text-left; }
+  .table thead th{ @apply px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200; }
+  .table tbody td{ @apply px-4 py-3 border-b border-gray-100; }
+  .table tbody tr{ @apply hover:bg-gray-50 transition-colors; }
+
+  .sidebar-item { @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-all; }
+  .sidebar-item.active { @apply bg-blue-600 text-white; }
+  .sidebar-group-title { @apply px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider mt-2; }
+
+  .stat-card { @apply card p-5 flex items-center gap-4; }
+  .stat-icon { @apply w-12 h-12 rounded-xl flex items-center justify-center text-xl; }
 }
