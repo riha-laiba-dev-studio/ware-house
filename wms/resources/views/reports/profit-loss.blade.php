@@ -3,12 +3,21 @@
 @section('page-title','Profit & Loss Report')
 
 @section('content')
-<div class="flex items-center justify-between mb-5">
-  <form class="flex gap-2">
+<div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+  <form class="flex gap-2 flex-wrap">
     <div><label class="form-label text-xs">From</label><input type="date" name="from" value="{{ $from }}" class="form-input"></div>
     <div><label class="form-label text-xs">To</label><input type="date" name="to" value="{{ $to }}" class="form-input"></div>
-    <div class="flex items-end"><button class="btn-primary btn-sm">Generate</button></div>
+    <div class="flex items-end gap-2">
+      <button class="btn-primary btn-sm"><i class="fas fa-chart-line"></i> Generate</button>
+      <a href="{{ route('reports.profit-loss') }}" class="btn-outline btn-sm">Reset</a>
+    </div>
   </form>
+  <div class="flex items-center gap-2">
+    <a href="{{ route('reports.profit-loss.pdf') }}?from={{ $from }}&to={{ $to }}" class="btn-outline btn-sm" target="_blank">
+      <i class="fas fa-file-pdf text-red-500"></i> PDF
+    </a>
+    <button onclick="window.print()" class="btn-outline btn-sm"><i class="fas fa-print text-blue-500"></i> Print</button>
+  </div>
 </div>
 
 <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">

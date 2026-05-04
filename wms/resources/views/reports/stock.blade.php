@@ -3,20 +3,39 @@
 @section('page-title','Stock Report')
 
 @section('content')
-<div class="flex items-center justify-between mb-5">
-  <form class="flex gap-2">
+<div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+  <form class="flex gap-2 flex-wrap">
     <select name="warehouse_id" class="form-select w-40">
       <option value="">All Warehouses</option>
       @foreach($warehouses as $w)<option value="{{ $w->id }}" {{ request('warehouse_id')==$w->id?'selected':'' }}>{{ $w->name }}</option>@endforeach
     </select>
-    <button class="btn-primary btn-sm">Filter</button>
+    <button class="btn-primary btn-sm"><i class="fas fa-filter"></i> Filter</button>
     <a href="{{ route('reports.stock') }}" class="btn-outline btn-sm">Reset</a>
   </form>
+  <div class="flex items-center gap-2">
+    <a href="{{ route('reports.stock.csv') }}?{{ request()->getQueryString() }}" class="btn-outline btn-sm">
+      <i class="fas fa-file-csv text-emerald-600"></i> CSV
+    </a>
+    <a href="{{ route('reports.stock.pdf') }}?{{ request()->getQueryString() }}" class="btn-outline btn-sm" target="_blank">
+      <i class="fas fa-file-pdf text-red-500"></i> PDF
+    </a>
+    <button onclick="window.print()" class="btn-outline btn-sm"><i class="fas fa-print text-blue-500"></i> Print</button>
+  </div>
 </div>
 
-<div class="card p-4 mb-4 flex justify-between items-center">
-  <div><p class="text-xs text-gray-500">Total Stock Value</p><p class="text-2xl font-bold text-blue-700">PKR {{ number_format($totalValue,2) }}</p></div>
-  <div class="text-sm text-gray-400">{{ $stock->count() }} item types</div>
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-5">
+  <div class="card p-4 flex items-center gap-3">
+    <div class="w-10 h-10 bg-violet-100 text-violet-600 rounded-xl flex items-center justify-center"><i class="fas fa-boxes-stacked"></i></div>
+    <div><p class="text-xs text-gray-500">Total SKUs</p><p class="text-xl font-bold text-gray-800">{{ $stock->count() }}</p></div>
+  </div>
+  <div class="card p-4 flex items-center gap-3">
+    <div class="w-10 h-10 bg-red-100 text-red-600 rounded-xl flex items-center justify-center"><i class="fas fa-triangle-exclamation"></i></div>
+    <div><p class="text-xs text-gray-500">Low Stock</p><p class="text-xl font-bold text-red-600">{{ $lowStock }}</p></div>
+  </div>
+  <div class="card p-4 flex items-center gap-3 lg:col-span-1 col-span-2">
+    <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center"><i class="fas fa-dollar-sign"></i></div>
+    <div><p class="text-xs text-gray-500">Total Stock Value</p><p class="text-xl font-bold text-emerald-700">PKR {{ number_format($totalValue,0) }}</p></div>
+  </div>
 </div>
 
 <div class="card">

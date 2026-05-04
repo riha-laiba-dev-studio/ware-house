@@ -13,6 +13,8 @@ use App\Http\Controllers\InventoryAdjustmentController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\SettingsController;
 
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login')->middleware('guest');
 Route::post('/login', [LoginController::class, 'login'])->middleware('guest');
@@ -41,13 +43,42 @@ Route::middleware(['auth', 'log.activity'])->group(function () {
 
     Route::resource('expenses', ExpenseController::class)->except(['edit','update']);
 
+    // Reports — view
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('profit-loss',  [ReportController::class, 'profitLoss'])->name('profit-loss');
         Route::get('sales',        [ReportController::class, 'sales'])->name('sales');
         Route::get('purchases',    [ReportController::class, 'purchases'])->name('purchases');
         Route::get('stock',        [ReportController::class, 'stock'])->name('stock');
         Route::get('open-balance', [ReportController::class, 'openBalanceSheet'])->name('open-balance');
+
+        // Export — CSV
+        Route::get('sales/csv',      [ReportController::class, 'salesCsv'])->name('sales.csv');
+        Route::get('purchases/csv',  [ReportController::class, 'purchasesCsv'])->name('purchases.csv');
+        Route::get('stock/csv',      [ReportController::class, 'stockCsv'])->name('stock.csv');
+
+        // Export — PDF
+        Route::get('sales/pdf',         [ReportController::class, 'salesPdf'])->name('sales.pdf');
+        Route::get('purchases/pdf',     [ReportController::class, 'purchasesPdf'])->name('purchases.pdf');
+        Route::get('stock/pdf',         [ReportController::class, 'stockPdf'])->name('stock.pdf');
+        Route::get('profit-loss/pdf',   [ReportController::class, 'profitLossPdf'])->name('profit-loss.pdf');
+        Route::get('open-balance/pdf',  [ReportController::class, 'openBalancePdf'])->name('open-balance.pdf');
+
+        // Per-document PDF
+        Route::get('sale/{sale}/invoice-pdf',       [ReportController::class, 'saleInvoicePdf'])->name('sale-invoice-pdf');
+        Route::get('purchase/{purchase}/order-pdf', [ReportController::class, 'purchaseOrderPdf'])->name('purchase-order-pdf');
     });
+
+    // Notifications / Alerts
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/',                [NotificationController::class, 'index'])->name('index');
+        Route::post('send-low-stock',  [NotificationController::class, 'sendLowStockEmail'])->name('send-low-stock');
+        Route::post('send-payment-due',[NotificationController::class, 'sendPaymentDueEmail'])->name('send-payment-due');
+    });
+
+    // Settings
+    Route::get('settings',         [SettingsController::class, 'index'])->name('settings.index');
+    Route::put('settings',         [SettingsController::class, 'update'])->name('settings.update');
+    Route::post('settings/test-email', [SettingsController::class, 'testEmail'])->name('settings.test-email');
 
     Route::middleware('role:Admin')->group(function () {
         Route::resource('users', UserController::class);

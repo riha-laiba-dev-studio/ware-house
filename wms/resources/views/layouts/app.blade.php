@@ -87,9 +87,12 @@
     </a>
     @endrole
 
-    <p class="sidebar-group-title">Account</p>
-    <a href="#" class="sidebar-item active">
-      <i class="fas fa-gear w-5 text-center flex-shrink-0"></i><span>Account Setting</span>
+    <p class="sidebar-group-title">System</p>
+    <a href="{{ route('notifications.index') }}" class="sidebar-item {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
+      <i class="fas fa-bell w-5 text-center flex-shrink-0"></i><span>Alerts & Notifications</span>
+    </a>
+    <a href="{{ route('settings.index') }}" class="sidebar-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+      <i class="fas fa-gear w-5 text-center flex-shrink-0"></i><span>Settings</span>
     </a>
     <form method="POST" action="{{ route('logout') }}">
       @csrf

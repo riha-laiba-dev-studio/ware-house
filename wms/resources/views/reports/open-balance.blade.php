@@ -3,6 +3,12 @@
 @section('page-title','Open Balance Sheet')
 
 @section('content')
+<div class="flex justify-end mb-4 gap-2">
+  <a href="{{ route('reports.open-balance.pdf') }}" class="btn-outline btn-sm" target="_blank">
+    <i class="fas fa-file-pdf text-red-500"></i> Export PDF
+  </a>
+  <button onclick="window.print()" class="btn-outline btn-sm"><i class="fas fa-print text-blue-500"></i> Print</button>
+</div>
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
   <div class="card">
     <div class="card-header"><h3 class="font-semibold text-gray-700">Supplier Payables</h3><span class="badge badge-danger">To Pay</span></div>

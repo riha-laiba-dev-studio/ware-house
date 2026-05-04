@@ -42,11 +42,45 @@
     <div class="card">
       <div class="card-header">
         <h3 class="font-semibold text-gray-700">Items</h3>
-        <div class="relative">
-          <input type="text" id="itemSearch" placeholder="Search & add item..." class="form-input w-56 text-sm">
-          <div id="itemDropdown" class="absolute top-full left-0 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50 hidden max-h-56 overflow-y-auto"></div>
+        <div class="flex items-center gap-2 flex-wrap">
+          <div class="relative">
+            <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+            <input type="text" id="itemSearch" placeholder="Search item or scan barcode..." class="form-input pl-8 w-64 text-sm">
+            <div id="itemDropdown" class="absolute top-full left-0 w-80 bg-white border border-gray-200 rounded-lg shadow-xl z-50 hidden max-h-56 overflow-y-auto"></div>
+          </div>
+          <button type="button" id="scannerToggleBtn" onclick="toggleScanner()" class="btn-outline btn-sm" title="Open barcode scanner">
+            <i class="fas fa-barcode text-blue-500"></i> Scan
+          </button>
         </div>
       </div>
+
+      {{-- Barcode Scanner --}}
+      <div id="scannerContainer" class="hidden border-t border-gray-100">
+        <div class="p-4 bg-gray-50">
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <span class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+              <p class="text-sm font-medium text-gray-700">Barcode Scanner — Point camera at barcode</p>
+            </div>
+            <button type="button" onclick="toggleScanner()" class="text-gray-400 hover:text-gray-600 text-xs"><i class="fas fa-times mr-1"></i>Close</button>
+          </div>
+          <div class="relative bg-black rounded-xl overflow-hidden" style="height:240px">
+            <video id="scannerVideo" class="w-full h-full object-cover" playsinline></video>
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+              <div class="w-56 h-32 border-2 border-blue-400 rounded-lg relative">
+                <div class="absolute top-0 left-0 w-5 h-5 border-t-4 border-l-4 border-blue-400 rounded-tl"></div>
+                <div class="absolute top-0 right-0 w-5 h-5 border-t-4 border-r-4 border-blue-400 rounded-tr"></div>
+                <div class="absolute bottom-0 left-0 w-5 h-5 border-b-4 border-l-4 border-blue-400 rounded-bl"></div>
+                <div class="absolute bottom-0 right-0 w-5 h-5 border-b-4 border-r-4 border-blue-400 rounded-br"></div>
+                <div id="scanLine" class="absolute left-2 right-2 h-0.5 bg-blue-400 opacity-80" style="top:50%;animation:scan 2s linear infinite"></div>
+              </div>
+            </div>
+          </div>
+          <p id="scannerStatus" class="text-xs text-center text-gray-500 mt-2">Starting camera...</p>
+          <p class="text-xs text-center text-gray-400 mt-1"><i class="fas fa-keyboard mr-1"></i>USB barcode scanners work automatically via keyboard input</p>
+        </div>
+      </div>
+
       <div class="overflow-x-auto">
         <table class="table">
           <thead><tr><th>Item</th><th>Unit</th><th>Available</th><th>Qty</th><th>Unit Cost</th><th>Subtotal</th><th></th></tr></thead>
@@ -117,6 +151,100 @@ $(document).on('click', function(e){
 });
 
 $('#shippingInput').on('input', function(){ $('#shippingDisplay').text(parseFloat($(this).val()||0).toFixed(2)); WMS.recalcTotal(); });
+
+// ---- Barcode Scanner ----
+let scannerStream = null;
+let barcodeDetector = null;
+let scannerActive = false;
+
+function toggleScanner() {
+  const container = document.getElementById('scannerContainer');
+  if (scannerActive) {
+    closeScanner();
+    container.classList.add('hidden');
+    document.getElementById('scannerToggleBtn').innerHTML = '<i class="fas fa-barcode text-blue-500"></i> Scan';
+  } else {
+    container.classList.remove('hidden');
+    document.getElementById('scannerToggleBtn').innerHTML = '<i class="fas fa-times text-red-500"></i> Close';
+    startScanner();
+  }
+}
+
+async function startScanner() {
+  const video = document.getElementById('scannerVideo');
+  const status = document.getElementById('scannerStatus');
+  try {
+    if ('BarcodeDetector' in window) {
+      barcodeDetector = new BarcodeDetector({ formats: ['code_128','code_39','ean_13','ean_8','qr_code','upc_a','upc_e','codabar','itf'] });
+    }
+    scannerStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } });
+    video.srcObject = scannerStream;
+    video.play();
+    scannerActive = true;
+    status.textContent = barcodeDetector ? 'Camera ready — aim at barcode' : 'Camera ready (manual entry active)';
+    if (barcodeDetector) scanFrame(video);
+  } catch(e) {
+    status.textContent = 'Camera unavailable — type SKU in search or use USB scanner';
+    status.className = 'text-xs text-center text-amber-600 mt-2';
+  }
+}
+
+async function scanFrame(video) {
+  if (!scannerActive || !barcodeDetector) return;
+  try {
+    const codes = await barcodeDetector.detect(video);
+    if (codes.length > 0) {
+      const sku = codes[0].rawValue;
+      document.getElementById('scannerStatus').textContent = '✓ Scanned: ' + sku;
+      searchItemBySku(sku);
+      await new Promise(r => setTimeout(r, 1800));
+    }
+  } catch(e) {}
+  if (scannerActive) requestAnimationFrame(() => scanFrame(video));
+}
+
+function closeScanner() {
+  scannerActive = false;
+  if (scannerStream) { scannerStream.getTracks().forEach(t => t.stop()); scannerStream = null; }
+}
+
+function searchItemBySku(sku) {
+  const item = items.find(i => i.sku === sku || i.sku.toLowerCase() === sku.toLowerCase());
+  if (item) {
+    const wId = $('#warehouseSelect').val();
+    const stock = item.inventory ? item.inventory.find(inv => inv.warehouse_id == wId)?.quantity ?? 0 : 0;
+    WMS.addItemRow('itemsContainer', { id: item.id, name: item.name, sku: item.sku, unit: item.unit?.symbol, stock, selling_price: item.purchase_price, unit_cost: item.purchase_price });
+    $('#emptyItems').hide();
+    const flash = document.createElement('div');
+    flash.className = 'fixed top-4 right-4 z-50 bg-emerald-500 text-white text-sm px-4 py-2 rounded-lg shadow-lg transition-all';
+    flash.textContent = '✓ Added: ' + item.name;
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 2000);
+  } else {
+    $('#itemSearch').val(sku).trigger('input');
+    document.getElementById('scannerStatus').textContent = 'SKU not found: ' + sku + ' — showing search results';
+  }
+}
+
+// USB Scanner: buffer fast keystrokes and treat as barcode
+let usbBuffer = '', usbTimer = null;
+$(document).on('keydown', function(e) {
+  if ($(e.target).is('input,textarea,select')) return;
+  if (e.key === 'Enter') {
+    if (usbBuffer.length >= 4) searchItemBySku(usbBuffer);
+    usbBuffer = '';
+    clearTimeout(usbTimer);
+    return;
+  }
+  if (e.key.length === 1) {
+    usbBuffer += e.key;
+    clearTimeout(usbTimer);
+    usbTimer = setTimeout(() => { usbBuffer = ''; }, 100);
+  }
+});
 </script>
+<style>
+@keyframes scan { 0%,100%{top:10%} 50%{top:90%} }
+</style>
 @endpush
 @endsection

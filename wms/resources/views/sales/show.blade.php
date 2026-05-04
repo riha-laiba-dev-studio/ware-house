@@ -81,6 +81,7 @@
     </div>
 
     <a href="{{ route('sales.invoice',$sale) }}" target="_blank" class="btn btn-sm w-full justify-center border border-violet-300 text-violet-700 hover:bg-violet-50"><i class="fas fa-print"></i> Print Invoice</a>
+    <a href="{{ route('reports.sale-invoice-pdf',$sale) }}" target="_blank" class="btn-danger btn-sm w-full justify-center"><i class="fas fa-file-pdf"></i> Download PDF Invoice</a>
 
     @if($sale->due_amount > 0)
     <div class="card">

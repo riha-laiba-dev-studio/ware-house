@@ -110,6 +110,7 @@
     </div>
     @endif
 
+    <a href="{{ route('reports.purchase-order-pdf',$purchase) }}" target="_blank" class="btn-outline btn-sm w-full justify-center mb-2"><i class="fas fa-file-pdf text-red-500"></i> Download PDF</a>
     <a href="{{ route('purchases.index') }}" class="btn-outline w-full justify-center"><i class="fas fa-arrow-left"></i> Back to Purchases</a>
   </div>
 </div>
