@@ -1,0 +1,328 @@
+We are building a production-level Warehouse Management System (WMS) for a real client.  
+I will provide you with the complete functional requirements document separately. Your task is to act as a Senior Software Architect, Backend Engineer, and Database Architect and generate a complete professional backend architecture and implementation strategy for this project.
+
+The system must be designed as a scalable, secure, maintainable, and enterprise-ready application capable of handling large inventory datasets, real-time stock movement, warehouse operations, purchases, sales, reporting, and multi-user access control.
+
+---
+
+# 🎯 Objective
+
+Analyze the provided requirements document carefully and provide a complete professional backend system design and implementation plan with proper architecture, database structure, business logic, and development roadmap.
+
+The solution must follow:
+- Clean Architecture principles
+- SOLID principles
+- Enterprise-level coding standards
+- Laravel best practices
+- Scalable database design
+- Secure API architecture
+- Optimized inventory management logic
+- Proper transaction handling
+- High-performance query optimization
+
+---
+
+# 📌 What I Need From You
+
+## 1. Recommended Tech Stack
+Suggest the most suitable stack for this project including:
+- Backend framework
+- Database
+- Authentication system
+- Queue system
+- Caching strategy
+- File storage
+- API architecture
+- Deployment approach
+
+Also explain why these technologies are suitable for warehouse-scale systems.
+
+---
+
+# 2. Complete Database Architecture
+
+Provide a fully optimized database structure including:
+
+### ✔ Tables
+For each table provide:
+- Table purpose
+- Columns and data types
+- Primary keys
+- Foreign keys
+- Indexes
+- Constraints
+- Nullable fields
+- Default values
+
+### ✔ Relationships
+Explain all entity relationships professionally including:
+- One-to-One
+- One-to-Many
+- Many-to-Many
+
+### ✔ Database Optimization
+Explain:
+- Indexing strategy
+- Query optimization
+- Inventory performance handling
+- Transaction management
+- Concurrency handling
+- Row locking strategy
+- Deadlock prevention
+- Pagination strategy
+- Large dataset handling
+- Data normalization approach
+
+The database design must be optimized for:
+- High inventory volume
+- Real-time stock updates
+- Multi-warehouse operations
+- Fast reporting
+- Secure data consistency
+
+---
+
+# 3. Laravel Backend Architecture
+
+Provide a complete professional backend architecture including:
+
+## ✔ Models
+Generate all required models with:
+- Relationships
+- Fillable fields
+- Scopes
+- Traits
+- Accessors/Mutators
+- Soft delete handling
+
+---
+
+## ✔ Controllers
+Generate all required controllers and explain:
+- Responsibilities
+- CRUD operations
+- Validation handling
+- Business logic separation
+- Transaction handling
+
+---
+
+## ✔ Services Layer
+Design a proper service-layer architecture including:
+- Inventory services
+- Purchase services
+- Sales services
+- Stock transfer services
+- Reporting services
+- Notification services
+
+Explain how business logic should be separated from controllers.
+
+---
+
+## ✔ Middleware
+Provide all required middleware including:
+- Authentication middleware
+- Role & permission middleware
+- Activity logging middleware
+- Audit middleware
+- Request validation/security middleware
+
+---
+
+## ✔ Policies & Authorization
+Design a proper RBAC system including:
+- Roles
+- Permissions
+- Policies
+- Gates
+- Access control strategy
+
+---
+
+## ✔ Events, Listeners & Jobs
+Implement event-driven architecture for:
+- Inventory updates
+- Purchase creation
+- Sales completion
+- Stock alerts
+- Notifications
+- Background processing
+
+Explain queue implementation and asynchronous processing strategy.
+
+---
+
+# 4. Inventory & Warehouse Logic (Most Important)
+
+Design a highly optimized and production-safe inventory management system.
+
+Provide complete backend logic for:
+- Stock initialization
+- Real-time inventory tracking
+- Purchase flow
+- Sales flow
+- Returns handling
+- Warehouse transfers
+- Inventory adjustments
+- Inventory movement logging
+- Payment tracking
+- Low stock alerts
+
+The logic must:
+- Prevent stock inconsistency
+- Avoid race conditions
+- Use database transactions correctly
+- Support concurrent users safely
+- Maintain accurate stock history
+- Ensure auditability
+
+---
+
+# 5. API Architecture
+
+Provide a professional REST API structure including:
+- API versioning
+- Route organization
+- Naming conventions
+- Request validation
+- API resources
+- Response formatting
+- Error handling
+- Pagination
+- Filtering
+- Sorting
+- Search functionality
+
+Include sample:
+- Request payloads
+- JSON responses
+- Error response structures
+
+---
+
+# 6. Migration Structure
+
+Provide:
+- Migration execution order
+- Foreign key strategy
+- Cascade rules
+- Soft delete strategy
+- Sample migration structure
+
+---
+
+# 7. Security Architecture
+
+Implement enterprise-grade security including:
+- Authentication & authorization
+- Secure password handling
+- Rate limiting
+- SQL injection prevention
+- XSS/CSRF protection
+- Secure file uploads
+- Audit logging
+- Login tracking
+- Activity monitoring
+
+---
+
+# 8. Reporting & Performance
+
+Design an optimized reporting system for:
+- Inventory reports
+- Purchase reports
+- Sales reports
+- Profit/Loss reports
+- Warehouse-wise analytics
+
+Also explain:
+- Query optimization strategy
+- Caching implementation
+- Export handling (PDF/Excel)
+- Large report generation handling
+
+---
+
+# 9. Scalability & Production Readiness
+
+Explain how the system should scale professionally including:
+- Handling millions of inventory records
+- Queue optimization
+- Cache strategy
+- Database optimization
+- Read/write separation
+- Backup strategy
+- Logging strategy
+- Monitoring strategy
+- Production deployment considerations
+
+---
+
+# 10. Testing Strategy
+
+Provide a professional testing plan including:
+- Unit testing
+- Feature testing
+- API testing
+- Inventory transaction testing
+- Integration testing
+- Performance testing
+
+---
+
+# 11. Professional Development Roadmap
+
+Create a professional phase-by-phase roadmap covering:
+- Project setup
+- Authentication
+- Database architecture
+- Core modules
+- Inventory system
+- Purchase & sales modules
+- Reporting
+- Optimization
+- Testing
+- Deployment
+
+The roadmap should follow a real-world enterprise development workflow.
+
+---
+
+# ⚠ Important Instructions
+
+While generating the solution:
+
+- Focus only on backend architecture and professional implementation strategy.
+- Do NOT generate ERDs, diagrams, or flowcharts.
+- Prioritize clean and scalable architecture.
+- Ensure all CRUD operations are production-ready.
+- Ensure proper database normalization and indexing.
+- Ensure inventory calculations are fully reliable.
+- Ensure stock movements are audit-safe.
+- Use proper naming conventions throughout the system.
+- Keep the architecture modular and maintainable.
+- Follow enterprise-level Laravel standards and best practices.
+
+---
+
+# 📌 Expected Output Format
+
+Provide the response in the following order:
+
+1. Recommended Tech Stack  
+2. Database Architecture  
+3. Models & Relationships  
+4. Controllers & CRUD Logic  
+5. Services Layer  
+6. Middleware & Authorization  
+7. Inventory & Warehouse Logic  
+8. API Architecture  
+9. Migration Strategy  
+10. Security Implementation  
+11. Reporting & Optimization  
+12. Scalability Strategy  
+13. Testing Strategy  
+14. Professional Development Roadmap
+
+I am also giving you figma reference which has the content of mobile shop but you can make the frontend design like as for the warehouse management system and change the content for warehouse management system
