@@ -1,0 +1,31 @@
+{
+  "name": "WMS Pro - Warehouse Management",
+  "short_name": "WMS Pro",
+  "description": "Professional Warehouse Management System",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "productivity"],
+  "shortcuts": [
+    { "name": "Dashboard",  "url": "/dashboard",       "description": "Go to Dashboard" },
+    { "name": "New Sale",   "url": "/sales/create",    "description": "Create New Sale" },
+    { "name": "Purchase",   "url": "/purchases/create","description": "Create Purchase Order" },
+    { "name": "Stock",      "url": "/reports/stock",   "description": "View Stock Report" }
+  ]
+}

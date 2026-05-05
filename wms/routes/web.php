@@ -15,7 +15,13 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\SaleReturnController;
+use App\Http\Controllers\PurchaseReturnController;
+use App\Http\Controllers\InventoryMovementController;
+use App\Http\Controllers\LoginLogController;
+use App\Http\Controllers\BackupController;
 
+Route::get('/offline', fn() => view('offline'))->name('offline');
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login')->middleware('guest');
 Route::post('/login', [LoginController::class, 'login'])->middleware('guest');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
@@ -80,7 +86,27 @@ Route::middleware(['auth', 'log.activity'])->group(function () {
     Route::put('settings',         [SettingsController::class, 'update'])->name('settings.update');
     Route::post('settings/test-email', [SettingsController::class, 'testEmail'])->name('settings.test-email');
 
+    // Sale Returns
+    Route::get('sale-returns/{sale}/items',  [SaleReturnController::class, 'getSaleItems'])->name('sale-returns.get-items');
+    Route::resource('sale-returns', SaleReturnController::class)->only(['index','create','store','show']);
+
+    // Purchase Returns
+    Route::get('purchase-returns/{purchase}/items', [PurchaseReturnController::class, 'getPurchaseItems'])->name('purchase-returns.get-items');
+    Route::resource('purchase-returns', PurchaseReturnController::class)->only(['index','create','store','show']);
+
+    // Inventory Movement Log
+    Route::get('inventory-movements', [InventoryMovementController::class, 'index'])->name('inventory-movements.index');
+
+    // Login Tracking
+    Route::get('login-logs', [LoginLogController::class, 'index'])->name('login-logs.index');
+
+    // Backup & Restore (Admin only)
     Route::middleware('role:Admin')->group(function () {
+        Route::get('backup',               [BackupController::class, 'index'])->name('backup.index');
+        Route::post('backup/create',       [BackupController::class, 'create'])->name('backup.create');
+        Route::get('backup/{file}',        [BackupController::class, 'download'])->name('backup.download');
+        Route::delete('backup/{file}',     [BackupController::class, 'destroy'])->name('backup.destroy');
+        Route::post('backup/restore',      [BackupController::class, 'restore'])->name('backup.restore');
         Route::resource('users', UserController::class);
     });
 });
