@@ -53,6 +53,7 @@
 
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function () {
 const items = @json($items);
 const itemMap = {};
 items.forEach(i => { itemMap[i.id] = i; });
@@ -91,6 +92,7 @@ $(document).on('click', '#itemDropdown [data-id]', function(){
   $('.remove-row').off('click').on('click', function(){ $(this).closest('tr').remove(); });
 });
 $(document).on('click', function(e){ if(!$(e.target).closest('#itemSearch,#itemDropdown').length) $('#itemDropdown').addClass('hidden'); });
+});
 </script>
 @endpush
 @endsection

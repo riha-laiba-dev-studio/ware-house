@@ -128,40 +128,83 @@
 
 @push('scripts')
 <script>
+document.addEventListener('DOMContentLoaded', function () {
+// Preloaded items (no dependency on API calls)
+const items = @json($items);
+if (!Array.isArray(items)) {
+  console.error('Purchase dropdown items payload is not an array:', items);
+}
+const itemMap = {};
+items.forEach(i => { itemMap[i.id] = i; });
 let searchResults = [];
 
-// 🔍 SEARCH ITEM (API CALL)
-$('#itemSearch').on('input', function () {
-  const q = $(this).val();
-
-  if (q.length < 2) {
-    $('#itemDropdown').addClass('hidden');
+function renderDropdown(list) {
+  if (!list.length) {
+    $('#itemDropdown').addClass('hidden').html('');
     return;
   }
 
   const warehouseId = $('#warehouseSelect').val();
 
-  WMS.searchItem(q, warehouseId, function (data) {
+  const html = list.map(i => {
+    const stock = i.inventory
+      ? (i.inventory.find(inv => inv.warehouse_id == warehouseId)?.quantity ?? 0)
+      : 0;
 
-    searchResults = data; // ✅ store results
-
-    if (!data.length) {
-      $('#itemDropdown').addClass('hidden');
-      return;
-    }
-
-    let html = data.map(i => `
+    return `
       <div class="px-3 py-2 hover:bg-blue-50 cursor-pointer border-b"
            data-id="${i.id}">
-        <p class="text-sm font-medium">${i.name}</p>
+        <p class="text-sm font-medium text-gray-800">${i.name}</p>
         <p class="text-xs text-gray-400">
-          ${i.sku} | Stock: ${i.stock} ${i.unit} | PKR ${i.purchase_price}
+          ${(i.sku || '')} | Stock: ${parseFloat(stock).toFixed(2)} ${i.unit?.symbol || ''} | PKR ${parseFloat(i.purchase_price || 0).toFixed(2)}
         </p>
       </div>
-    `).join('');
+    `;
+  }).join('');
 
-    $('#itemDropdown').html(html).removeClass('hidden');
+  $('#itemDropdown').html(html).removeClass('hidden');
+}
+
+function getFilteredItems(q) {
+  const query = (q || '').toLowerCase().trim();
+  const filtered = items.filter(i => {
+    return (i.name || '').toLowerCase().includes(query)
+      || (i.sku || '').toLowerCase().includes(query)
+      || (i.barcode || '').toLowerCase().includes(query);
   });
+
+  // Keep it snappy
+  return filtered.slice(0, 15);
+}
+
+// Show suggestions on focus (so the "item list" is visible immediately)
+$('#itemSearch').on('focus click', function () {
+  const q = $(this).val();
+  const list = q && q.length >= 1 ? getFilteredItems(q) : items.slice().sort((a,b) => (a.name||'').localeCompare(b.name||'')) .slice(0, 15);
+  searchResults = list;
+  renderDropdown(list);
+});
+
+// 🔍 SEARCH ITEM (local filter)
+$('#itemSearch').on('input', function () {
+  const q = $(this).val();
+
+  if (!q || q.length < 1) {
+    $('#itemDropdown').addClass('hidden').html('');
+    return;
+  }
+
+  if (q.length < 2) {
+    // Still allow results for 1 character to meet your "list visible" requirement.
+    const list = getFilteredItems(q);
+    searchResults = list;
+    renderDropdown(list);
+    return;
+  }
+
+  const list = getFilteredItems(q);
+  searchResults = list;
+  renderDropdown(list);
 });
 
 
@@ -169,16 +212,21 @@ $('#itemSearch').on('input', function () {
 $(document).on('click', '#itemDropdown [data-id]', function () {
 
   const id = $(this).data('id'); // ✅ FIX
-  const item = searchResults.find(i => i.id == id); // ✅ FIX
+  const item = itemMap[id] || searchResults.find(i => i.id == id); // ✅ FIX
 
   if (!item) return;
+
+  const warehouseId = $('#warehouseSelect').val();
+  const stock = item.inventory
+    ? (item.inventory.find(inv => inv.warehouse_id == warehouseId)?.quantity ?? 0)
+    : 0;
 
   WMS.addItemRow('itemsContainer', {
     id: item.id,
     name: item.name,
     sku: item.sku,
-    unit: item.unit,
-    stock: item.stock,
+    unit: item.unit?.symbol || '',
+    stock: stock,
     selling_price: item.purchase_price,
     unit_cost: item.purchase_price
   });
@@ -201,6 +249,7 @@ $(document).on('click', function (e) {
 $('#shippingInput').on('input', function () {
   $('#shippingDisplay').text(parseFloat($(this).val() || 0).toFixed(2));
   WMS.recalcTotal();
+});
 });
 </script>
 <style>
