@@ -9,7 +9,7 @@ class SupplierController extends Controller
     public function index(Request $request)
     {
         $query = Supplier::query();
-        if ($request->search) $query->where('name','like','%'.$request->search.'%')->orWhere('phone','like','%'.$request->search.'%');
+        if ($request->search) $query->where(fn($q) => $q->where('name','like','%'.$request->search.'%')->orWhere('phone','like','%'.$request->search.'%'));
         $suppliers = $query->withSum(['purchases'=>fn($q)=>$q],'total_amount')->withSum(['purchases'=>fn($q)=>$q],'paid_amount')->paginate(15)->withQueryString();
         return view('suppliers.index', compact('suppliers'));
     }

@@ -12,7 +12,7 @@ class ItemController extends Controller
     public function index(Request $request)
     {
         $query = Item::with(['category','unit','brand'])->withSum('inventory','quantity');
-        if ($request->search) $query->where('name','like','%'.$request->search.'%')->orWhere('sku','like','%'.$request->search.'%');
+        if ($request->search) $query->where(fn($q) => $q->where('name','like','%'.$request->search.'%')->orWhere('sku','like','%'.$request->search.'%'));
         if ($request->category_id) $query->where('category_id',$request->category_id);
         if ($request->brand_id)    $query->where('brand_id',$request->brand_id);
         $items = $query->paginate(15)->withQueryString();
