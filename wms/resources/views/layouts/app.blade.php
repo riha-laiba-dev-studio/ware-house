@@ -8,6 +8,7 @@
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#2563eb">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="WMS Pro">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -242,6 +243,14 @@ window.addEventListener('beforeinstallprompt', e => {
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('/sw.js').catch(()=>{});
 }
+</script>
+
+<script>
+// Runtime config for JS (base-path safe URLs)
+window.WMS_CONFIG = {
+  itemSearchUrl: @json(route('ajax.items.search')),
+  itemStockUrl: @json(route('ajax.items.stock-warehouse')),
+};
 </script>
 
 @stack('scripts')

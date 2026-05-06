@@ -165,16 +165,16 @@
 
 @push('scripts')
 <script>
-function switchTab(tab) {
+window.switchTab = function switchTab(tab) {
   ['company','email','sms'].forEach(t => {
     document.getElementById('panel-'+t).classList.add('hidden');
     document.getElementById('tab-'+t).classList.remove('active');
   });
   document.getElementById('panel-'+tab).classList.remove('hidden');
   document.getElementById('tab-'+tab).classList.add('active');
-}
+};
 
-function sendTestEmail() {
+window.sendTestEmail = function sendTestEmail() {
   const email = document.getElementById('testEmailAddr').value;
   const result = document.getElementById('testEmailResult');
   if (!email) { result.textContent = 'Please enter an email address.'; result.className = 'mt-2 text-sm text-red-600'; result.classList.remove('hidden'); return; }
@@ -182,7 +182,12 @@ function sendTestEmail() {
   $.post('{{ route("settings.test-email") }}', { email, _token: $('meta[name="csrf-token"]').attr('content') })
     .done(r => { result.textContent = r.message; result.className = 'mt-2 text-sm text-emerald-600'; })
     .fail(e => { result.textContent = 'Error: ' + (e.responseJSON?.message || 'Failed to send'); result.className = 'mt-2 text-sm text-red-600'; });
-}
+};
+
+// Ensure jQuery is available before use (Vite scripts are deferred)
+document.addEventListener('DOMContentLoaded', function () {
+  // no-op: functions above are now safe to call after DOM is ready
+});
 </script>
 @endpush
 

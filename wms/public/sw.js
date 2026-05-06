@@ -1,18 +1,23 @@
-const CACHE_NAME = 'wms-pro-v1';
+const CACHE_NAME = 'wms-pro-v2';
 const OFFLINE_URL = '/offline';
 
 const PRECACHE_URLS = [
   '/',
-  '/dashboard',
   '/offline',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css',
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => cache.addAll(PRECACHE_URLS.filter(u => !u.startsWith('http') || u.includes('fonts') || u.includes('cloudflare'))))
+      .then(async cache => {
+        // Cache.addAll fails the whole install if ANY request fails (e.g. missing routes).
+        // Cache URLs one-by-one and ignore failures so SW still installs.
+        const results = await Promise.allSettled(
+          PRECACHE_URLS.map(url => cache.add(url))
+        );
+        // Optional: keep SW install resilient; nothing to throw here.
+        return results;
+      })
       .then(() => self.skipWaiting())
   );
 });

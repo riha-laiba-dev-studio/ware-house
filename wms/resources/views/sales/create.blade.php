@@ -129,43 +129,12 @@ const items = @json($items);
 const itemMap = {};
 items.forEach(i => { itemMap[i.id] = i; });
 
-$('#itemSearch').on('input', function(){
-  const q = $(this).val().toLowerCase();
-  if(q.length < 2){ $('#itemDropdown').addClass('hidden'); return; }
-  const wId = parseInt($('#warehouseSelect').val());
-  const filtered = items.filter(i => i.name.toLowerCase().includes(q) || (i.sku||'').toLowerCase().includes(q));
-  if(!filtered.length){ $('#itemDropdown').addClass('hidden'); return; }
-  let html = filtered.slice(0,10).map(i => {
-    const stock = i.inventory ? (i.inventory.find(inv => inv.warehouse_id == wId)?.quantity ?? 0) : 0;
-    return `<div class="px-3 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-50 last:border-0" data-id="${i.id}" data-stock="${stock}">
-      <p class="text-sm font-medium text-gray-800">${i.name}</p>
-      <p class="text-xs text-gray-400">${i.sku} | Stock: <span class="${stock <= 0 ? 'text-red-500' : 'text-emerald-500'}">${parseFloat(stock).toFixed(2)}</span> | PKR ${parseFloat(i.selling_price).toFixed(2)}</p>
-    </div>`;
-  }).join('');
-  $('#itemDropdown').html(html).removeClass('hidden');
-});
-
-$(document).on('click', '#itemDropdown [data-id]', function(){
-  const id = $(this).data('id');
-  const item = itemMap[id];
-  const stock = $(this).data('stock');
-  if(!item) return;
-  WMS.addItemRow('itemsContainer', { id: item.id, name: item.name, sku: item.sku, unit: item.unit?.symbol, stock, selling_price: item.selling_price });
-  $('#emptyItems').hide();
-  $('#itemSearch').val('');
-  $('#itemDropdown').addClass('hidden');
-});
-
-$(document).on('click', function(e){ if(!$(e.target).closest('#itemSearch, #itemDropdown').length) $('#itemDropdown').addClass('hidden'); });
-
-$('#discountInput,#taxInput,#shippingInput').on('input', WMS.recalcTotal);
-
-// ---- Barcode Scanner ----
+// ---- Barcode Scanner (must be global because of inline onclick="toggleScanner()") ----
 let scannerStream = null;
 let barcodeDetector = null;
 let scannerActive = false;
 
-function toggleScanner() {
+window.toggleScanner = function toggleScanner() {
   const container = document.getElementById('scannerContainer');
   if (scannerActive) {
     closeScanner();
@@ -176,7 +145,7 @@ function toggleScanner() {
     document.getElementById('scannerToggleBtn').innerHTML = '<i class="fas fa-times text-red-500"></i> Close';
     startScanner();
   }
-}
+};
 
 async function startScanner() {
   const video = document.getElementById('scannerVideo');
@@ -236,17 +205,52 @@ function searchItemBySku(sku) {
 
 // USB scanner support
 let usbBuffer = '', usbTimer = null;
-$(document).on('keydown', function(e) {
-  if ($(e.target).is('input,textarea,select')) return;
-  if (e.key === 'Enter') {
-    if (usbBuffer.length >= 4) searchItemBySku(usbBuffer);
-    usbBuffer = ''; clearTimeout(usbTimer); return;
-  }
-  if (e.key.length === 1) {
-    usbBuffer += e.key;
-    clearTimeout(usbTimer);
-    usbTimer = setTimeout(() => { usbBuffer = ''; }, 100);
-  }
+
+// Bind jQuery-dependent handlers after Vite bundle loads (so `$` exists)
+document.addEventListener('DOMContentLoaded', function () {
+  $('#itemSearch').on('input', function(){
+    const q = $(this).val().toLowerCase();
+    if(q.length < 2){ $('#itemDropdown').addClass('hidden'); return; }
+    const wId = parseInt($('#warehouseSelect').val());
+    const filtered = items.filter(i => i.name.toLowerCase().includes(q) || (i.sku||'').toLowerCase().includes(q));
+    if(!filtered.length){ $('#itemDropdown').addClass('hidden'); return; }
+    let html = filtered.slice(0,10).map(i => {
+      const stock = i.inventory ? (i.inventory.find(inv => inv.warehouse_id == wId)?.quantity ?? 0) : 0;
+      return `<div class="px-3 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-50 last:border-0" data-id="${i.id}" data-stock="${stock}">
+        <p class="text-sm font-medium text-gray-800">${i.name}</p>
+        <p class="text-xs text-gray-400">${i.sku} | Stock: <span class="${stock <= 0 ? 'text-red-500' : 'text-emerald-500'}">${parseFloat(stock).toFixed(2)}</span> | PKR ${parseFloat(i.selling_price).toFixed(2)}</p>
+      </div>`;
+    }).join('');
+    $('#itemDropdown').html(html).removeClass('hidden');
+  });
+
+  $(document).on('click', '#itemDropdown [data-id]', function(){
+    const id = $(this).data('id');
+    const item = itemMap[id];
+    const stock = $(this).data('stock');
+    if(!item) return;
+    WMS.addItemRow('itemsContainer', { id: item.id, name: item.name, sku: item.sku, unit: item.unit?.symbol, stock, selling_price: item.selling_price });
+    $('#emptyItems').hide();
+    $('#itemSearch').val('');
+    $('#itemDropdown').addClass('hidden');
+  });
+
+  $(document).on('click', function(e){ if(!$(e.target).closest('#itemSearch, #itemDropdown').length) $('#itemDropdown').addClass('hidden'); });
+
+  $('#discountInput,#taxInput,#shippingInput').on('input', WMS.recalcTotal);
+
+  $(document).on('keydown', function(e) {
+    if ($(e.target).is('input,textarea,select')) return;
+    if (e.key === 'Enter') {
+      if (usbBuffer.length >= 4) searchItemBySku(usbBuffer);
+      usbBuffer = ''; clearTimeout(usbTimer); return;
+    }
+    if (e.key.length === 1) {
+      usbBuffer += e.key;
+      clearTimeout(usbTimer);
+      usbTimer = setTimeout(() => { usbBuffer = ''; }, 100);
+    }
+  });
 });
 </script>
 <style>
