@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\DashboardController;
@@ -20,6 +21,8 @@ use App\Http\Controllers\PurchaseReturnController;
 use App\Http\Controllers\InventoryMovementController;
 use App\Http\Controllers\LoginLogController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\UnitController;
 
 Route::get('/offline', fn() => view('offline'))->name('offline');
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login')->middleware('guest');
@@ -34,20 +37,20 @@ Route::middleware(['auth', 'log.activity'])->group(function () {
     Route::resource('suppliers', SupplierController::class);
     Route::resource('customers', CustomerController::class);
 
-    Route::resource('purchases', PurchaseController::class)->except(['edit','update','destroy']);
+    Route::resource('purchases', PurchaseController::class)->except(['edit', 'update', 'destroy']);
     Route::post('purchases/{purchase}/receive',  [PurchaseController::class, 'receive'])->name('purchases.receive');
     Route::post('purchases/{purchase}/payment',  [PurchaseController::class, 'addPayment'])->name('purchases.payment');
 
-    Route::resource('sales', SaleController::class)->except(['edit','update','destroy']);
+    Route::resource('sales', SaleController::class)->except(['edit', 'update', 'destroy']);
     Route::post('sales/{sale}/payment', [SaleController::class, 'addPayment'])->name('sales.payment');
     Route::get('sales/{sale}/invoice',  [SaleController::class, 'invoice'])->name('sales.invoice');
 
-    Route::resource('stock-transfers', StockTransferController::class)->except(['edit','update','destroy']);
+    Route::resource('stock-transfers', StockTransferController::class)->except(['edit', 'update', 'destroy']);
     Route::post('stock-transfers/{stockTransfer}/approve', [StockTransferController::class, 'approve'])->name('stock-transfers.approve');
 
-    Route::resource('inventory-adjustments', InventoryAdjustmentController::class)->except(['edit','update','destroy']);
+    Route::resource('inventory-adjustments', InventoryAdjustmentController::class)->except(['edit', 'update', 'destroy']);
 
-    Route::resource('expenses', ExpenseController::class)->except(['edit','update']);
+    Route::resource('expenses', ExpenseController::class)->except(['edit', 'update']);
 
     // Reports — view
     Route::prefix('reports')->name('reports.')->group(function () {
@@ -78,7 +81,7 @@ Route::middleware(['auth', 'log.activity'])->group(function () {
     Route::prefix('notifications')->name('notifications.')->group(function () {
         Route::get('/',                [NotificationController::class, 'index'])->name('index');
         Route::post('send-low-stock',  [NotificationController::class, 'sendLowStockEmail'])->name('send-low-stock');
-        Route::post('send-payment-due',[NotificationController::class, 'sendPaymentDueEmail'])->name('send-payment-due');
+        Route::post('send-payment-due', [NotificationController::class, 'sendPaymentDueEmail'])->name('send-payment-due');
     });
 
     // Settings
@@ -88,11 +91,11 @@ Route::middleware(['auth', 'log.activity'])->group(function () {
 
     // Sale Returns
     Route::get('sale-returns/{sale}/items',  [SaleReturnController::class, 'getSaleItems'])->name('sale-returns.get-items');
-    Route::resource('sale-returns', SaleReturnController::class)->only(['index','create','store','show']);
+    Route::resource('sale-returns', SaleReturnController::class)->only(['index', 'create', 'store', 'show']);
 
     // Purchase Returns
     Route::get('purchase-returns/{purchase}/items', [PurchaseReturnController::class, 'getPurchaseItems'])->name('purchase-returns.get-items');
-    Route::resource('purchase-returns', PurchaseReturnController::class)->only(['index','create','store','show']);
+    Route::resource('purchase-returns', PurchaseReturnController::class)->only(['index', 'create', 'store', 'show']);
 
     // Inventory Movement Log
     Route::get('inventory-movements', [InventoryMovementController::class, 'index'])->name('inventory-movements.index');
@@ -109,4 +112,7 @@ Route::middleware(['auth', 'log.activity'])->group(function () {
         Route::post('backup/restore',      [BackupController::class, 'restore'])->name('backup.restore');
         Route::resource('users', UserController::class);
     });
+    // Categories & Units
+    Route::resource('categories', CategoryController::class);
+    Route::resource('units', UnitController::class);
 });
