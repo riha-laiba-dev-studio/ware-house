@@ -187,7 +187,7 @@ function closeScanner() {
 
 function searchItemBySku(sku) {
   const wId = parseInt($('#warehouseSelect').val());
-  const item = items.find(i => i.sku === sku || i.sku.toLowerCase() === sku.toLowerCase());
+  const item = items.find(i => i.sku === sku || (i.sku||'').toLowerCase() === sku.toLowerCase());
   if (item) {
     const stock = item.inventory ? (item.inventory.find(inv => inv.warehouse_id == wId)?.quantity ?? 0) : 0;
     WMS.addItemRow('itemsContainer', { id: item.id, name: item.name, sku: item.sku, unit: item.unit?.symbol, stock, selling_price: item.selling_price });
@@ -216,7 +216,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if(!filtered.length){ $('#itemDropdown').addClass('hidden'); return; }
     let html = filtered.slice(0,10).map(i => {
       const stock = i.inventory ? (i.inventory.find(inv => inv.warehouse_id == wId)?.quantity ?? 0) : 0;
-      return `<div class="px-3 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-50 last:border-0" data-id="${i.id}" data-stock="${stock}">
+      return `<div class="px-3 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-50 last:border-0" data-id="${i.id}">
         <p class="text-sm font-medium text-gray-800">${i.name}</p>
         <p class="text-xs text-gray-400">${i.sku} | Stock: <span class="${stock <= 0 ? 'text-red-500' : 'text-emerald-500'}">${parseFloat(stock).toFixed(2)}</span> | PKR ${parseFloat(i.selling_price).toFixed(2)}</p>
       </div>`;
@@ -227,15 +227,23 @@ document.addEventListener('DOMContentLoaded', function () {
   $(document).on('click', '#itemDropdown [data-id]', function(){
     const id = $(this).data('id');
     const item = itemMap[id];
-    const stock = $(this).data('stock');
     if(!item) return;
+    const wId = parseInt($('#warehouseSelect').val()) || null;
+    if (!wId) { alert('Please select a Warehouse first.'); return; }
+    const stock = item.inventory ? (item.inventory.find(inv => inv.warehouse_id == wId)?.quantity ?? 0) : 0;
     WMS.addItemRow('itemsContainer', { id: item.id, name: item.name, sku: item.sku, unit: item.unit?.symbol, stock, selling_price: item.selling_price });
     $('#emptyItems').hide();
     $('#itemSearch').val('');
     $('#itemDropdown').addClass('hidden');
   });
 
-  $(document).on('click', function(e){ if(!$(e.target).closest('#itemSearch, #itemDropdown').length) $('#itemDropdown').addClass('hidden'); });
+  // Re-trigger search when warehouse changes so stock values stay accurate
+  $('#warehouseSelect').on('change', function(){
+    const q = $('#itemSearch').val();
+    if (q && q.length >= 2) $('#itemSearch').trigger('input');
+  });
+
+  $(document).on('click', function(e){ if(!$(e.target).closest('#itemSearch,#itemDropdown').length) $('#itemDropdown').addClass('hidden'); });
 
   $('#discountInput,#taxInput,#shippingInput').on('input', WMS.recalcTotal);
 

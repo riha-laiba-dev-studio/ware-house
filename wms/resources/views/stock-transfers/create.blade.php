@@ -62,9 +62,10 @@ $('#itemSearch').on('input', function(){
   const wId = parseInt($('#fromWarehouse').val());
   const filtered = items.filter(i => i.name.toLowerCase().includes(q) || (i.sku||'').toLowerCase().includes(q));
   if(!filtered.length){ $('#itemDropdown').addClass('hidden'); return; }
+  const warehouseSelected = !!$('#fromWarehouse').val();
   let html = filtered.slice(0,10).map(i => {
-    const stock = i.inventory ? (i.inventory.find(inv => inv.warehouse_id == wId)?.quantity ?? 0) : 0;
-    return `<div class="px-3 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-50" data-id="${i.id}" data-stock="${stock}">
+    const stock = (warehouseSelected && i.inventory) ? (i.inventory.find(inv => inv.warehouse_id == wId)?.quantity ?? 0) : 0;
+    return `<div class="px-3 py-2 hover:bg-blue-50 cursor-pointer border-b border-gray-50" data-id="${i.id}">
       <p class="text-sm font-medium">${i.name}</p>
       <p class="text-xs text-gray-400">${i.sku} | Available: <span class="${stock<=0?'text-red-500':'text-emerald-500'}">${parseFloat(stock).toFixed(2)}</span></p>
     </div>`;
@@ -75,7 +76,17 @@ $('#itemSearch').on('input', function(){
 $(document).on('click', '#itemDropdown [data-id]', function(){
   const id = $(this).data('id');
   const item = itemMap[id];
-  const stock = $(this).data('stock');
+  if (!item) return;
+  const wId = parseInt($('#fromWarehouse').val()) || null;
+  if (!wId) {
+    alert('Please select a From Warehouse first.');
+    return;
+  }
+  const stock = item.inventory ? (item.inventory.find(inv => inv.warehouse_id == wId)?.quantity ?? 0) : 0;
+  if (stock <= 0) {
+    alert('Insufficient stock in the selected warehouse. Available: ' + parseFloat(stock).toFixed(2));
+    return;
+  }
   const idx = $('#itemsContainer tr').length;
   const row = `<tr>
     <td>${item.name}<input type="hidden" name="items[${idx}][item_id]" value="${item.id}"></td>
@@ -89,6 +100,13 @@ $(document).on('click', '#itemDropdown [data-id]', function(){
   $('#itemSearch').val(''); $('#itemDropdown').addClass('hidden');
   $('.remove-row').off('click').on('click', function(){ $(this).closest('tr').remove(); });
 });
+
+// Re-trigger search when warehouse changes so stock values stay accurate
+$('#fromWarehouse').on('change', function(){
+  const q = $('#itemSearch').val();
+  if (q && q.length >= 2) $('#itemSearch').trigger('input');
+});
+
 $(document).on('click', function(e){ if(!$(e.target).closest('#itemSearch,#itemDropdown').length) $('#itemDropdown').addClass('hidden'); });
 });
 </script>

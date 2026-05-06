@@ -37,6 +37,6 @@ class Item extends Model
     public function getImageUrlAttribute(): string {
         return $this->image ? route('media.show', ['path' => $this->image]) : asset('images/no-image.png');
     }
-    public function scopeActive($q) { return $q->where('is_active',true); }
+    public function scopeActive($q) { return $q->where(fn($q2) => $q2->where('is_active',true)->orWhereNull('is_active')); }
     public function scopeLowStock($q) { return $q->whereHas('inventory',fn($i) => $i->whereRaw('quantity <= items.alert_quantity')); }
 }

@@ -9,7 +9,7 @@ class CustomerController extends Controller
     public function index(Request $request)
     {
         $query = Customer::query();
-        if ($request->search) $query->where('name','like','%'.$request->search.'%')->orWhere('phone','like','%'.$request->search.'%');
+        if ($request->search) $query->where(fn($q) => $q->where('name','like','%'.$request->search.'%')->orWhere('phone','like','%'.$request->search.'%'));
         $customers = $query->paginate(15)->withQueryString();
         return view('customers.index', compact('customers'));
     }
