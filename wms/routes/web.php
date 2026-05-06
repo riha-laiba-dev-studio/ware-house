@@ -23,6 +23,8 @@ use App\Http\Controllers\LoginLogController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\Api\ItemController as ApiItemController;
+use App\Http\Controllers\MediaController;
 
 Route::get('/offline', fn() => view('offline'))->name('offline');
 Route::get('/login', [LoginController::class, 'showLogin'])->name('login')->middleware('guest');
@@ -115,4 +117,13 @@ Route::middleware(['auth', 'log.activity'])->group(function () {
     // Categories & Units
     Route::resource('categories', CategoryController::class);
     Route::resource('units', UnitController::class);
+
+    // AJAX (session-auth) endpoints used by create forms
+    Route::get('ajax/items/search',          [ApiItemController::class, 'search'])->name('ajax.items.search');
+    Route::get('ajax/items/stock-warehouse', [ApiItemController::class, 'stockByWarehouse'])->name('ajax.items.stock-warehouse');
+
+    // Serve uploaded media from storage (avoids public/storage symlink issues)
+    Route::get('media/{path}', [MediaController::class, 'show'])
+        ->where('path', '.*')
+        ->name('media.show');
 });

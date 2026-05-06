@@ -10,28 +10,47 @@ class ItemController extends Controller
 {
     public function search(Request $request)
     {
-        $items = Item::query()
-    ->with(['unit','inventory'])
-    ->where(function($q) use ($request) {
-        $q->where('name','like','%'.$request->q.'%')
-          ->orWhere('sku','like','%'.$request->q.'%')
-          ->orWhere('barcode',$request->q);
-    })
-    ->limit(20)
-    ->get()
-    ->map(function($item) {
-        return [
-            'id'             => $item->id,
-            'name'           => $item->name,
-            'sku'            => $item->sku,
-            'unit'           => $item->unit->symbol ?? '',
-            'purchase_price' => $item->purchase_price,
-            'selling_price'  => $item->selling_price,
-            'stock'          => $item->inventory->sum('quantity'),
-        ];
-    });
-    
-    return response()->json($items);
+        $q = trim((string) $request->get('q', ''));
+        $warehouseIdRaw = $request->input('warehouse_id');
+        // When dropdown is searched before selecting warehouse, `warehouse_id` might be empty.
+        // Avoid crashing the endpoint; treat it as "no specific warehouse".
+        $warehouseId = (is_numeric($warehouseIdRaw) && (string)$warehouseIdRaw !== '')
+            ? (int) $warehouseIdRaw
+            : null;
+
+        $itemsQuery = Item::query()
+            ->active()
+            ->with(['unit', 'inventory']);
+
+        if ($q !== '') {
+            $itemsQuery->where(function ($qq) use ($q) {
+                $qq->where('name', 'like', '%' . $q . '%')
+                    ->orWhere('sku', 'like', '%' . $q . '%')
+                    ->orWhere('barcode', $q);
+            });
+        }
+
+        $items = $itemsQuery
+            ->orderBy('name')
+            ->limit(50)
+            ->get()
+            ->map(function ($item) use ($warehouseId) {
+                $stock = $warehouseId
+                    ? ($item->inventory->firstWhere('warehouse_id', $warehouseId)?->quantity ?? 0)
+                    : $item->inventory->sum('quantity');
+
+                return [
+                    'id'             => $item->id,
+                    'name'           => $item->name,
+                    'sku'            => $item->sku,
+                    'unit'           => $item->unit->symbol ?? '',
+                    'purchase_price' => $item->purchase_price,
+                    'selling_price'  => $item->selling_price,
+                    'stock'          => $stock,
+                ];
+            });
+
+        return response()->json($items);
     }
     public function stockByWarehouse(Request $request)
     {

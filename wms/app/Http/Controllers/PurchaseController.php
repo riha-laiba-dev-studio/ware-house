@@ -30,7 +30,27 @@ class PurchaseController extends Controller
     {
         $suppliers  = Supplier::active()->get();
         $warehouses = Warehouse::active()->get();
-        $items      = Item::active()->with(['unit','variants'])->get();
+        // Preload only what the purchase "items" dropdown needs.
+        // Keeps JSON small and avoids frontend parse issues.
+        $items = Item::active()
+            ->with(['unit', 'inventory'])
+            ->get()
+            ->map(function (Item $item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'sku' => $item->sku,
+                    'barcode' => $item->barcode,
+                    'purchase_price' => $item->purchase_price,
+                    'unit' => ['symbol' => $item->unit?->symbol ?? ''],
+                    'inventory' => $item->inventory->map(function ($inv) {
+                        return [
+                            'warehouse_id' => $inv->warehouse_id,
+                            'quantity' => $inv->quantity,
+                        ];
+                    })->values(),
+                ];
+            });
         return view('purchases.create', compact('suppliers','warehouses','items'));
     }
 

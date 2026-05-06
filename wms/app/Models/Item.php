@@ -35,7 +35,7 @@ class Item extends Model
         return $this->getTotalStockAttribute() <= $this->alert_quantity;
     }
     public function getImageUrlAttribute(): string {
-        return $this->image ? asset('storage/'.$this->image) : asset('images/no-image.png');
+        return $this->image ? route('media.show', ['path' => $this->image]) : asset('images/no-image.png');
     }
     public function scopeActive($q) { return $q->where('is_active',true); }
     public function scopeLowStock($q) { return $q->whereHas('inventory',fn($i) => $i->whereRaw('quantity <= items.alert_quantity')); }

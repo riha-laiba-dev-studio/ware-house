@@ -8,7 +8,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::all();
+        $categories = Category::withCount('items')->orderBy('name')->get();
         return view('categories.index', compact('categories'));
     }
 
@@ -19,10 +19,12 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        Category::create([
-            'name' => $request->name
+        $request->validate([
+            'name' => 'required|string|max:255',
         ]);
 
-        return redirect()->route('categories.index');
+        Category::create(['name' => $request->name]);
+
+        return redirect()->route('categories.index')->with('success', 'Category created successfully.');
     }
 }
