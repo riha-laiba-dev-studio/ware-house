@@ -70,36 +70,38 @@
 
 @push('scripts')
 <script>
-$('#saleSelect').on('change', function(){
-  const id = $(this).val();
-  if(!id){ $('#itemsWrap').addClass('hidden'); $('#noItems').removeClass('hidden'); return; }
-  $.get('/sale-returns/'+id+'/items', function(sale){
-    let html = '';
-    sale.items.forEach((item,i) => {
-      html += `<tr>
-        <td><strong>${item.item.name}</strong><br><span class="text-xs text-gray-400">${item.item.sku}</span></td>
-        <td>${item.item.unit?.symbol??''}</td>
-        <td><input type="number" name="items[${i}][quantity]" class="form-input w-24 qty-input" min="0.01" max="${item.quantity}" step="0.01" value="${item.quantity}" data-price="${item.unit_price}">
-          <input type="hidden" name="items[${i}][item_id]" value="${item.item_id}">
-          <p class="text-xs text-gray-400 mt-0.5">Max: ${parseFloat(item.quantity).toFixed(2)}</p></td>
-        <td>
-          <input type="number" name="items[${i}][unit_price]" class="form-input w-28 price-input" step="0.01" min="0" value="${item.unit_price}" data-idx="${i}">
-        </td>
-        <td class="font-semibold subtotal-${i}">PKR ${(item.quantity*item.unit_price).toFixed(2)}</td>
-        <td><button type="button" onclick="$(this).closest('tr').remove(); calcTotal();" class="text-red-400 hover:text-red-600"><i class="fas fa-times"></i></button></td>
-      </tr>`;
+document.addEventListener('DOMContentLoaded', function () {
+  $('#saleSelect').on('change', function(){
+    const id = $(this).val();
+    if(!id){ $('#itemsWrap').addClass('hidden'); $('#noItems').removeClass('hidden'); return; }
+    $.get('/sale-returns/'+id+'/items', function(sale){
+      let html = '';
+      sale.items.forEach((item,i) => {
+        html += `<tr>
+          <td><strong>${item.item.name}</strong><br><span class="text-xs text-gray-400">${item.item.sku}</span></td>
+          <td>${item.item.unit?.symbol??''}</td>
+          <td><input type="number" name="items[${i}][quantity]" class="form-input w-24 qty-input" min="0.01" max="${item.quantity}" step="0.01" value="${item.quantity}" data-price="${item.unit_price}">
+            <input type="hidden" name="items[${i}][item_id]" value="${item.item_id}">
+            <p class="text-xs text-gray-400 mt-0.5">Max: ${parseFloat(item.quantity).toFixed(2)}</p></td>
+          <td>
+            <input type="number" name="items[${i}][unit_price]" class="form-input w-28 price-input" step="0.01" min="0" value="${item.unit_price}" data-idx="${i}">
+          </td>
+          <td class="font-semibold subtotal-${i}">PKR ${(item.quantity*item.unit_price).toFixed(2)}</td>
+          <td><button type="button" onclick="$(this).closest('tr').remove(); window.calcTotal();" class="text-red-400 hover:text-red-600"><i class="fas fa-times"></i></button></td>
+        </tr>`;
+      });
+      $('#itemsBody').html(html);
+      $('#itemsWrap').removeClass('hidden');
+      $('#noItems').addClass('hidden');
+      window.calcTotal();
+      $('.qty-input,.price-input').on('input', window.calcTotal);
     });
-    $('#itemsBody').html(html);
-    $('#itemsWrap').removeClass('hidden');
-    $('#noItems').addClass('hidden');
-    calcTotal();
-    $('.qty-input,.price-input').on('input', calcTotal);
   });
 });
 
-function calcTotal(){
+window.calcTotal = function calcTotal(){
   let total = 0;
-  $('#itemsBody tr').each(function(i){
+  $('#itemsBody tr').each(function(){
     const qty = parseFloat($(this).find('.qty-input').val()||0);
     const price = parseFloat($(this).find('.price-input').val()||0);
     const sub = qty * price;
@@ -107,7 +109,7 @@ function calcTotal(){
     $(this).find('td:nth-child(5)').text('PKR ' + sub.toFixed(2));
   });
   $('#totalDisplay').text('PKR ' + total.toFixed(2));
-}
+};
 </script>
 @endpush
 @endsection
