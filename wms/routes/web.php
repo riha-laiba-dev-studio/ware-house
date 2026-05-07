@@ -136,7 +136,8 @@ Route::middleware(['auth', 'log.activity'])->group(function () {
     });
     // Categories & Units
     Route::resource('categories', CategoryController::class);
-    Route::resource('units', UnitController::class);
+    Route::post('/units', [UnitController::class, 'storeUnit']);
+    Route::post('/brands', [ItemController::class, 'storeBrand']);
 
     // AJAX (session-auth) endpoints used by create forms
     Route::get('ajax/items/search',          [ApiItemController::class, 'search'])->name('ajax.items.search');
