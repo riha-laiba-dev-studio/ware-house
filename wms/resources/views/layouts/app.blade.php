@@ -151,7 +151,9 @@
 
   <div class="px-4 py-3 border-t border-slate-700">
     <div class="flex items-center gap-3">
-      <img src="{{ auth()->user()->avatar_url }}" class="w-8 h-8 rounded-full object-cover flex-shrink-0">
+      <a href="{{ route('profile.show') }}" class="flex-shrink-0" title="Profile">
+        <img src="{{ auth()->user()->avatar_url }}" class="w-8 h-8 rounded-full object-cover">
+      </a>
       <div class="flex-1 min-w-0">
         <p class="text-white text-xs font-semibold truncate">{{ auth()->user()->name }}</p>
         <p class="text-slate-400 text-xs truncate">{{ auth()->user()->getRoleNames()->first() ?? 'User' }}</p>
@@ -189,7 +191,9 @@
         <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center leading-none font-bold">{{ $lowStock }}</span>
       </a>
       @endif
-      <img src="{{ auth()->user()->avatar_url }}" class="w-8 h-8 rounded-full object-cover">
+      <a href="{{ route('profile.show') }}" title="Profile">
+        <img src="{{ auth()->user()->avatar_url }}" class="w-8 h-8 rounded-full object-cover">
+      </a>
     </div>
   </header>
 
