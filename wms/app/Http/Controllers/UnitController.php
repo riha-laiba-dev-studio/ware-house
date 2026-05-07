@@ -18,15 +18,14 @@ class UnitController extends Controller
         return view('units.create');
     }
 
-    public function store(Request $request)
+    public function storeUnit(Request $request)
     {
-        $request->validate([
-            'name'   => 'required|string|max:255',
-            'symbol' => 'required|string|max:50',
+        $unit = Unit::create([
+            'name' => $request->name,
+            'symbol' => $request->symbol,
+            'is_active' => 1
         ]);
 
-        Unit::create($request->only(['name', 'symbol']));
-
-        return redirect()->route('units.index');
+        return response()->json($unit);
     }
 }

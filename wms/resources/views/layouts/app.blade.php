@@ -119,12 +119,6 @@
       <a href="{{ route('warehouses.index') }}" class="sidebar-item {{ request()->routeIs('warehouses.*') ? 'active' : '' }}">
         <i class="fas fa-warehouse w-5 text-center flex-shrink-0"></i><span>Warehouses</span>
       </a>
-      <a href="{{ route('categories.index') }}" class="sidebar-item {{ request()->routeIs('categories.*') ? 'active' : '' }}">
-        <i class="fas fa-boxes-stacked w-5 text-center flex-shrink-0"></i><span>Categories</span>
-      </a>
-      <a href="{{ route('units.index') }}" class="sidebar-item {{ request()->routeIs('units.*') ? 'active' : '' }}">
-        <i class="fas fa-ruler w-5 text-center flex-shrink-0"></i><span>Units</span>
-      </a>
       <a href="{{ route('items.index') }}" class="sidebar-item {{ request()->routeIs('items.*') ? 'active' : '' }}">
         <i class="fas fa-boxes-stacked w-5 text-center flex-shrink-0"></i><span>Products</span>
       </a>
