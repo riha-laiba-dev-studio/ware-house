@@ -73,7 +73,7 @@ Route::middleware(['auth', 'log.activity'])->group(function () {
     Route::resource('inventory-adjustments', InventoryAdjustmentController::class)->except(['edit', 'update', 'destroy']);
 
     Route::resource('expenses', ExpenseController::class)->except(['edit', 'update']);
-
+    Route::post('/expense-categories', [ExpenseController::class, 'storeCategory']);
     // Reports — view
     Route::prefix('reports')->name('reports.')->group(function () {
         Route::get('profit-loss',  [ReportController::class, 'profitLoss'])->name('profit-loss');
