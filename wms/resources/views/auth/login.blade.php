@@ -50,14 +50,21 @@
         </div>
         <div class="flex items-center justify-between">
           <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
-            <input type="checkbox" name="remember" class="rounded border-gray-300 text-blue-600">
+            <input type="checkbox" name="remember" class="rounded border-gray-300 text-blue-600" {{ old('remember') ? 'checked' : '' }}>
             Remember me
           </label>
+          <a href="{{ route('password.request') }}" class="text-sm font-medium text-blue-600 hover:text-blue-700">
+            Forgot password?
+          </a>
         </div>
         <button type="submit" class="w-full btn-primary justify-center py-3 text-base">
           <i class="fas fa-right-to-bracket"></i> Sign In
         </button>
       </form>
+      <div class="mt-6 text-center text-sm text-gray-600">
+        New here?
+        <a href="{{ route('register') }}" class="text-blue-600 hover:text-blue-700 font-semibold">Create an account</a>
+      </div>
     </div>
     <p class="text-center text-blue-300 text-xs mt-6">© {{ date('Y') }} WMS Pro. All rights reserved.</p>
   </div>
