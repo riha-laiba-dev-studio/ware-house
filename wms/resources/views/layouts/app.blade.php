@@ -100,16 +100,23 @@
   <div id="sidebarOverlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden"></div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-slate-900 z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
   <div class="flex items-center gap-3 px-5 py-5 border-b border-slate-700">
     <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
       <i class="fas fa-warehouse text-white text-sm"></i>
+=======
+  <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-slate-900 z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
+    <div class="flex items-center gap-3 px-5 py-5 border-b border-slate-700">
+      <div class="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center flex-shrink-0">
+        <i class="fas fa-warehouse text-white text-sm"></i>
+      </div>
+      <div>
+        <p class="text-white font-bold text-sm leading-none">WMS Pro</p>
+        <p class="text-slate-400 text-xs mt-0.5">Warehouse Management</p>
+      </div>
+>>>>>>> 18c22df9a477ddad94ae591be6c7a94150756089
     </div>
-    <div>
-      <p class="text-white font-bold text-sm leading-none">WMS Pro</p>
-      <p class="text-slate-400 text-xs mt-0.5">Warehouse Management</p>
-    </div>
-  </div>
 
   <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5 text-sm">
     <a href="{{ route('dashboard') }}" class="sidebar-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
@@ -219,6 +226,7 @@
       <div class="flex-1 min-w-0">
         <p class="text-white text-xs font-semibold truncate">{{ auth()->user()->name }}</p>
         <p class="text-slate-400 text-xs truncate">{{ auth()->user()->getRoleNames()->first() ?? 'User' }}</p>
+<<<<<<< HEAD
 =======
   <aside id="sidebar" class="fixed inset-y-0 left-0 w-64 bg-slate-900 z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 flex flex-col">
     <div class="flex items-center gap-3 px-5 py-5 border-b border-slate-700">
@@ -232,6 +240,8 @@
       </div>
     </div>
 
+=======
+>>>>>>> 18c22df9a477ddad94ae591be6c7a94150756089
     <nav class="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-0.5 text-sm">
       <a href="{{ route('dashboard') }}" class="sidebar-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
         <i class="fas fa-chart-pie w-5 text-center flex-shrink-0"></i><span>Dashboard</span>
@@ -383,12 +393,18 @@
       </div>
       @endif
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 18c22df9a477ddad94ae591be6c7a94150756089
       <a href="{{ route('profile.show') }}" title="Profile">
         <img src="{{ auth()->user()->avatar_url }}" class="w-8 h-8 rounded-full object-cover">
       </a>
     </div>
   </header>
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 18c22df9a477ddad94ae591be6c7a94150756089
       @if(session('error'))
       <div class="auto-dismiss mb-4 flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
         <i class="fas fa-exclamation-circle text-red-500"></i> {{ session('error') }}
@@ -402,7 +418,10 @@
       @yield('content')
     </main>
   </div>
+<<<<<<< HEAD
 >>>>>>> 2e63412df6f670036c79e467d97dcb16416b5415
+=======
+>>>>>>> 18c22df9a477ddad94ae591be6c7a94150756089
 
   <script>
     // Dark mode
