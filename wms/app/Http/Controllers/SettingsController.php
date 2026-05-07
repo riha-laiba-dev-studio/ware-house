@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -10,20 +11,20 @@ class SettingsController extends Controller
     public function index()
     {
         $settings = [
-            'mail_mailer'     => env('MAIL_MAILER','log'),
-            'mail_host'       => env('MAIL_HOST',''),
-            'mail_port'       => env('MAIL_PORT','587'),
-            'mail_username'   => env('MAIL_USERNAME',''),
-            'mail_from'       => env('MAIL_FROM_ADDRESS','wms@example.com'),
-            'mail_from_name'  => env('MAIL_FROM_NAME','WMS Pro'),
-            'twilio_sid'      => env('TWILIO_SID',''),
-            'twilio_from'     => env('TWILIO_FROM',''),
-            'sms_enabled'     => env('SMS_ENABLED','false'),
-            'currency'        => env('WMS_CURRENCY','PKR'),
-            'company_name'    => env('WMS_COMPANY','WMS Pro'),
-            'company_email'   => env('WMS_EMAIL','admin@wms.com'),
-            'company_phone'   => env('WMS_PHONE',''),
-            'company_address' => env('WMS_ADDRESS',''),
+            'mail_mailer'     => env('MAIL_MAILER', 'log'),
+            'mail_host'       => env('MAIL_HOST', ''),
+            'mail_port'       => env('MAIL_PORT', '587'),
+            'mail_username'   => env('MAIL_USERNAME', ''),
+            'mail_from'       => env('MAIL_FROM_ADDRESS', 'wms@example.com'),
+            'mail_from_name'  => env('MAIL_FROM_NAME', 'WMS Pro'),
+            'twilio_sid'      => env('TWILIO_SID', ''),
+            'twilio_from'     => env('TWILIO_FROM', ''),
+            'sms_enabled'     => env('SMS_ENABLED', 'false'),
+            'currency'        => env('WMS_CURRENCY', 'PKR'),
+            'company_name'    => env('WMS_COMPANY', 'WMS Pro'),
+            'company_email'   => env('WMS_EMAIL', 'admin@wms.com'),
+            'company_phone'   => env('WMS_PHONE', ''),
+            'company_address' => env('WMS_ADDRESS', ''),
         ];
         return view('settings.index', compact('settings'));
     }
@@ -41,28 +42,34 @@ class SettingsController extends Controller
             'company_name'   => 'nullable|string|max:100',
             'company_email'  => 'nullable|email',
             'company_phone'  => 'nullable|string|max:30',
-            'company_address'=> 'nullable|string|max:255',
+            'company_address' => 'nullable|string|max:255',
             'twilio_sid'     => 'nullable|string',
             'twilio_token'   => 'nullable|string',
             'twilio_from'    => 'nullable|string',
             'sms_enabled'    => 'nullable|string',
         ]);
 
+        // ✅ FIX 1: define env path
         $envPath = base_path('.env');
+
+        if (!file_exists($envPath)) {
+            return back()->with('error', '.env file not found');
+        }
+
         $envContent = file_get_contents($envPath);
 
         $replacements = [
-            'MAIL_HOST'          => $data['mail_host'] ?? '',
-            'MAIL_PORT'          => $data['mail_port'] ?? '587',
-            'MAIL_USERNAME'      => $data['mail_username'] ?? '',
-            'MAIL_FROM_ADDRESS'  => $data['mail_from'] ?? 'wms@example.com',
-            'MAIL_FROM_NAME'     => '"'.($data['mail_from_name'] ?? 'WMS Pro').'"',
-            'WMS_CURRENCY'       => $data['currency'] ?? 'PKR',
-            'WMS_COMPANY'        => '"'.($data['company_name'] ?? 'WMS Pro').'"',
-            'WMS_EMAIL'          => $data['company_email'] ?? '',
-            'WMS_PHONE'          => $data['company_phone'] ?? '',
-            'WMS_ADDRESS'        => '"'.($data['company_address'] ?? '').'"',
-            'SMS_ENABLED'        => $data['sms_enabled'] ?? 'false',
+            'MAIL_HOST'         => $data['mail_host'] ?? '',
+            'MAIL_PORT'         => $data['mail_port'] ?? '587',
+            'MAIL_USERNAME'     => $data['mail_username'] ?? '',
+            'MAIL_FROM_ADDRESS' => $data['mail_from'] ?? 'wms@example.com',
+            'MAIL_FROM_NAME'    => '"' . ($data['mail_from_name'] ?? 'WMS Pro') . '"',
+            'WMS_CURRENCY'      => $data['currency'] ?? 'PKR',
+            'WMS_COMPANY'       => '"' . ($data['company_name'] ?? 'WMS Pro') . '"',
+            'WMS_EMAIL'         => $data['company_email'] ?? '',
+            'WMS_PHONE'         => $data['company_phone'] ?? '',
+            'WMS_ADDRESS'       => '"' . ($data['company_address'] ?? '') . '"',
+            'SMS_ENABLED'       => $data['sms_enabled'] ?? 'false',
         ];
 
         if (!empty($data['mail_password'])) {
@@ -87,9 +94,12 @@ class SettingsController extends Controller
         }
 
         file_put_contents($envPath, $envContent);
+
         Artisan::call('config:clear');
 
-        return back()->with('success', 'Settings saved successfully.');
+        // ✅ FIX 2: safe redirect (you already corrected this part 👍)
+        return redirect()->route('settings.index')
+            ->with('success', 'Settings saved successfully.');
     }
 
     public function testEmail(Request $request)
