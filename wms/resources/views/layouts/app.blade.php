@@ -110,6 +110,114 @@
       </div>
     </div>
 
+  <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5 text-sm">
+    <a href="{{ route('dashboard') }}" class="sidebar-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
+      <i class="fas fa-chart-pie w-5 text-center flex-shrink-0"></i><span>Dashboard</span>
+    </a>
+
+    <p class="sidebar-group-title">Inventory Management</p>
+    <a href="{{ route('warehouses.index') }}" class="sidebar-item {{ request()->routeIs('warehouses.*') ? 'active' : '' }}">
+      <i class="fas fa-warehouse w-5 text-center flex-shrink-0"></i><span>Warehouses</span>
+    </a>
+    <a href="{{ route('categories.index') }}" class="sidebar-item {{ request()->routeIs('categories.*') ? 'active' : '' }}">
+      <i class="fas fa-boxes-stacked w-5 text-center flex-shrink-0"></i><span>Categories</span>
+    </a>
+    <a href="{{ route('units.index') }}" class="sidebar-item {{ request()->routeIs('units.*') ? 'active' : '' }}">
+      <i class="fas fa-ruler w-5 text-center flex-shrink-0"></i><span>Units</span>
+    </a>
+    <a href="{{ route('items.index') }}" class="sidebar-item {{ request()->routeIs('items.*') ? 'active' : '' }}">
+      <i class="fas fa-boxes-stacked w-5 text-center flex-shrink-0"></i><span>Products</span>
+    </a>
+    <a href="{{ route('stock-transfers.index') }}" class="sidebar-item {{ request()->routeIs('stock-transfers.*') ? 'active' : '' }}">
+      <i class="fas fa-right-left w-5 text-center flex-shrink-0"></i><span>Stock Transfers</span>
+    </a>
+    <a href="{{ route('inventory-adjustments.index') }}" class="sidebar-item {{ request()->routeIs('inventory-adjustments.*') ? 'active' : '' }}">
+      <i class="fas fa-sliders w-5 text-center flex-shrink-0"></i><span>Adjustments</span>
+    </a>
+    <a href="{{ route('inventory-movements.index') }}" class="sidebar-item {{ request()->routeIs('inventory-movements.*') ? 'active' : '' }}">
+      <i class="fas fa-chart-gantt w-5 text-center flex-shrink-0"></i><span>Movement Log</span>
+    </a>
+
+    <p class="sidebar-group-title">Purchases</p>
+    <a href="{{ route('suppliers.index') }}" class="sidebar-item {{ request()->routeIs('suppliers.*') ? 'active' : '' }}">
+      <i class="fas fa-truck w-5 text-center flex-shrink-0"></i><span>Suppliers</span>
+    </a>
+    <a href="{{ route('purchases.index') }}" class="sidebar-item {{ request()->routeIs('purchases.*') ? 'active' : '' }}">
+      <i class="fas fa-cart-flatbed w-5 text-center flex-shrink-0"></i><span>Purchase Orders</span>
+    </a>
+    <a href="{{ route('purchase-returns.index') }}" class="sidebar-item {{ request()->routeIs('purchase-returns.*') ? 'active' : '' }}">
+      <i class="fas fa-rotate-right w-5 text-center flex-shrink-0"></i><span>Purchase Returns</span>
+    </a>
+
+    <p class="sidebar-group-title">Sales</p>
+    <a href="{{ route('customers.index') }}" class="sidebar-item {{ request()->routeIs('customers.*') ? 'active' : '' }}">
+      <i class="fas fa-users w-5 text-center flex-shrink-0"></i><span>Customers</span>
+    </a>
+    <a href="{{ route('sales.index') }}" class="sidebar-item {{ request()->routeIs('sales.*') ? 'active' : '' }}">
+      <i class="fas fa-receipt w-5 text-center flex-shrink-0"></i><span>Sales Invoices</span>
+    </a>
+    <a href="{{ route('sale-returns.index') }}" class="sidebar-item {{ request()->routeIs('sale-returns.*') ? 'active' : '' }}">
+      <i class="fas fa-rotate-left w-5 text-center flex-shrink-0"></i><span>Sale Returns</span>
+    </a>
+
+    <p class="sidebar-group-title">Finance</p>
+    <a href="{{ route('expenses.index') }}" class="sidebar-item {{ request()->routeIs('expenses.*') ? 'active' : '' }}">
+      <i class="fas fa-money-bill-wave w-5 text-center flex-shrink-0"></i><span>Expenses</span>
+    </a>
+    <a href="{{ route('reports.profit-loss') }}" class="sidebar-item {{ request()->routeIs('reports.profit-loss') ? 'active' : '' }}">
+      <i class="fas fa-chart-line w-5 text-center flex-shrink-0"></i><span>Profit & Loss</span>
+    </a>
+    <a href="{{ route('reports.open-balance') }}" class="sidebar-item {{ request()->routeIs('reports.open-balance') ? 'active' : '' }}">
+      <i class="fas fa-scale-balanced w-5 text-center flex-shrink-0"></i><span>Balance Sheet</span>
+    </a>
+
+    <p class="sidebar-group-title">Reports</p>
+    <a href="{{ route('reports.sales') }}" class="sidebar-item {{ request()->routeIs('reports.sales') ? 'active' : '' }}">
+      <i class="fas fa-file-invoice w-5 text-center flex-shrink-0"></i><span>Sales Report</span>
+    </a>
+    <a href="{{ route('reports.purchases') }}" class="sidebar-item {{ request()->routeIs('reports.purchases') ? 'active' : '' }}">
+      <i class="fas fa-file-invoice-dollar w-5 text-center flex-shrink-0"></i><span>Purchase Report</span>
+    </a>
+    <a href="{{ route('reports.stock') }}" class="sidebar-item {{ request()->routeIs('reports.stock') ? 'active' : '' }}">
+      <i class="fas fa-boxes w-5 text-center flex-shrink-0"></i><span>Stock Report</span>
+    </a>
+
+    @role('Admin')
+    <p class="sidebar-group-title">Administration</p>
+    <a href="{{ route('users.index') }}" class="sidebar-item {{ request()->routeIs('users.*') ? 'active' : '' }}">
+      <i class="fas fa-user-gear w-5 text-center flex-shrink-0"></i><span>Users & Roles</span>
+    </a>
+    <a href="{{ route('login-logs.index') }}" class="sidebar-item {{ request()->routeIs('login-logs.*') ? 'active' : '' }}">
+      <i class="fas fa-clock-rotate-left w-5 text-center flex-shrink-0"></i><span>Login History</span>
+    </a>
+    <a href="{{ route('backup.index') }}" class="sidebar-item {{ request()->routeIs('backup.*') ? 'active' : '' }}">
+      <i class="fas fa-database w-5 text-center flex-shrink-0"></i><span>Backup & Restore</span>
+    </a>
+    @endrole
+
+    <p class="sidebar-group-title">System</p>
+    <a href="{{ route('notifications.index') }}" class="sidebar-item {{ request()->routeIs('notifications.*') ? 'active' : '' }}">
+      <i class="fas fa-bell w-5 text-center flex-shrink-0"></i><span>Alerts</span>
+    </a>
+    <a href="{{ route('settings.index') }}" class="sidebar-item {{ request()->routeIs('settings.*') ? 'active' : '' }}">
+      <i class="fas fa-gear w-5 text-center flex-shrink-0"></i><span>Settings</span>
+    </a>
+    <form method="POST" action="{{ route('logout') }}">
+      @csrf
+      <button type="submit" class="sidebar-item w-full text-left text-red-400 hover:text-red-300 hover:bg-red-900/30">
+        <i class="fas fa-right-from-bracket w-5 text-center flex-shrink-0"></i><span>Logout</span>
+      </button>
+    </form>
+  </nav>
+
+  <div class="px-4 py-3 border-t border-slate-700">
+    <div class="flex items-center gap-3">
+      <a href="{{ route('profile.show') }}" class="flex-shrink-0" title="Profile">
+        <img src="{{ auth()->user()->avatar_url }}" class="w-8 h-8 rounded-full object-cover">
+      </a>
+      <div class="flex-1 min-w-0">
+        <p class="text-white text-xs font-semibold truncate">{{ auth()->user()->name }}</p>
+        <p class="text-slate-400 text-xs truncate">{{ auth()->user()->getRoleNames()->first() ?? 'User' }}</p>
     <nav class="flex-1 overflow-y-auto scrollbar-hide px-3 py-4 space-y-0.5 text-sm">
       <a href="{{ route('dashboard') }}" class="sidebar-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
         <i class="fas fa-chart-pie w-5 text-center flex-shrink-0"></i><span>Dashboard</span>
@@ -260,6 +368,11 @@
         <i class="fas fa-check-circle text-emerald-500"></i> {{ session('success') }}
       </div>
       @endif
+      <a href="{{ route('profile.show') }}" title="Profile">
+        <img src="{{ auth()->user()->avatar_url }}" class="w-8 h-8 rounded-full object-cover">
+      </a>
+    </div>
+  </header>
       @if(session('error'))
       <div class="auto-dismiss mb-4 flex items-center gap-3 bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-lg text-sm">
         <i class="fas fa-exclamation-circle text-red-500"></i> {{ session('error') }}
