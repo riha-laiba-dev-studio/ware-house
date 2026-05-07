@@ -22,9 +22,11 @@ class CategoryController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
+ $category = Category::firstOrCreate(
+            ['name' => $request->name],
+            ['is_active' => 1]
+        );
 
-        Category::create(['name' => $request->name]);
-
-        return redirect()->route('categories.index')->with('success', 'Category created successfully.');
+        return response()->json($category);
     }
 }
