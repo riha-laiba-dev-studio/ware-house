@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="flex items-center justify-between mb-5">
-  <p class="text-sm text-gray-500">Items returned to suppliers — stock is automatically deducted.</p>
+  <p class="text-sm text-gray-500">Items returned to suppliers stock is automatically deducted.</p>
   <a href="{{ route('purchase-returns.create') }}" class="btn-primary"><i class="fas fa-plus"></i> New Purchase Return</a>
 </div>
 
