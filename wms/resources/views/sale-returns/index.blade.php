@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="flex items-center justify-between mb-5">
-  <p class="text-sm text-gray-500">Returned items from customers — stock is automatically restored.</p>
+  <p class="text-sm text-gray-500">Returned items from customers stock is automatically restored.</p>
   <a href="{{ route('sale-returns.create') }}" class="btn-primary"><i class="fas fa-plus"></i> New Sale Return</a>
 </div>
 
